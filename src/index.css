@@ -1,0 +1,389 @@
+:root {
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: #e7eff7;
+  background: #091019;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 10%, #102033 0%, #081019 45%, #060b11 100%);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+}
+
+.left-column,
+.right-column {
+  min-height: 0;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.card {
+  background: rgba(17, 29, 41, 0.86);
+  border: 1px solid #263747;
+  border-radius: 10px;
+  padding: 0.9rem;
+}
+
+.section-gap h2,
+.chat-panel h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.subheading {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.muted {
+  color: #9ab0c4;
+  margin: 0;
+}
+
+.small {
+  font-size: 0.75rem;
+}
+
+.row {
+  display: flex;
+}
+
+.gap-sm {
+  gap: 0.5rem;
+}
+
+.button {
+  background: #2d6da8;
+  border: 1px solid #4f88bc;
+  color: #eff7ff;
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  filter: brightness(1.1);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button.subtle {
+  background: transparent;
+  border-color: #7089a0;
+}
+
+.button.danger {
+  background: #8d3242;
+  border-color: #a74d5d;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #334f63;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: #f2f6fb;
+  background: #122230;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.project-list li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem;
+}
+
+.list-button {
+  border: 1px solid #324655;
+  background: #132330;
+  color: #dce9f6;
+  border-radius: 8px;
+  text-align: left;
+  padding: 0.45rem;
+  cursor: pointer;
+  display: grid;
+}
+
+.chat-panel {
+  display: grid;
+  gap: 0.6rem;
+  flex: 1;
+  min-height: 320px;
+}
+
+.chat-list {
+  min-height: 190px;
+  max-height: 320px;
+  overflow: auto;
+  display: grid;
+  gap: 0.45rem;
+  padding-right: 0.3rem;
+}
+
+.message {
+  border: 1px solid #2e4659;
+  border-radius: 8px;
+  padding: 0.45rem;
+}
+
+.message.user {
+  background: #10283b;
+}
+
+.message.assistant {
+  background: #1c2732;
+}
+
+.message h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  color: #c6dbef;
+}
+
+.message p {
+  margin: 0;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.chat-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.render-panel {
+  background: rgba(12, 20, 28, 0.9);
+  border: 1px solid #263747;
+  border-radius: 12px;
+  padding: 0.8rem;
+  min-height: calc(100vh - 2rem);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.7rem;
+}
+
+.render-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.render-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #d8e6f3;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.mode-chip {
+  border: 1px solid #3f5d76;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.mode-chip.is-2d {
+  background: #16344a;
+  border-color: #3f6f93;
+  color: #cfe8ff;
+}
+
+.mode-chip.is-3d {
+  background: #214531;
+  border-color: #4c8f69;
+  color: #d9f7e7;
+}
+
+.mode-label {
+  min-width: 1.7rem;
+  text-align: center;
+}
+
+.mode-toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mode-toggle-track {
+  width: 2.65rem;
+  height: 1.45rem;
+  border-radius: 999px;
+  border: 1px solid #466179;
+  background: #102535;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem;
+  transition: background-color 0.2s ease;
+}
+
+.mode-toggle-thumb {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: #dfeeff;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+}
+
+.mode-toggle-input:checked + .mode-toggle-track {
+  background: #2c6ea8;
+}
+
+.mode-toggle-input:checked + .mode-toggle-track .mode-toggle-thumb {
+  transform: translateX(1.16rem);
+}
+
+.mode-toggle-input:focus-visible + .mode-toggle-track {
+  outline: 2px solid #86bdf0;
+  outline-offset: 2px;
+}
+
+.render-surface {
+  border: 1px solid #2a3e51;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+.render-3d canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.blueprint-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.loading-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #d3e4f4;
+}
+
+.spinner {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid #5b7a96;
+  border-top-color: #d8ecff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.error-banner {
+  position: fixed;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 10;
+  max-width: 430px;
+  background: #5f2230;
+  border: 1px solid #8f3a4b;
+  color: #ffe8eb;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.empty-state {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #afc0cf;
+  padding: 1rem;
+}
+
+.empty-state h3 {
+  margin: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1060px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .render-panel {
+    min-height: 620px;
+  }
+}

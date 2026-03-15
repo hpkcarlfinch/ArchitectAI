@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "architectai-c0aee",
+    "architectai-staging": "architectai-c0aee"
+  },
+  "targets": {},
+  "etags": {}
+}
