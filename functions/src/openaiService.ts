@@ -81,7 +81,7 @@ const makeClient = (apiKey: string): OpenAI => {
 
   return new OpenAI({
     apiKey,
-    timeout: 60000,
+    timeout: 30000,
     maxRetries: 0,
   });
 };
@@ -133,6 +133,8 @@ export async function generateBlueprintWithRetry(
     model: string;
   },
 ): Promise<AIEnvelope> {
+  const startedAt = Date.now();
+  const maxTotalDurationMs = 90000;
   const openai = makeClient(options.apiKey);
 
   const buildMessages = (historyLimit: number): Array<{ role: "system" | "user" | "assistant"; content: string }> => {
@@ -148,7 +150,7 @@ export async function generateBlueprintWithRetry(
     ];
   };
 
-  const modelCandidates = [options.model, "gpt-4o-mini"].filter(
+  const modelCandidates = ["gpt-4o-mini", options.model].filter(
     (model, idx, arr) => arr.indexOf(model) === idx,
   );
 
@@ -157,11 +159,16 @@ export async function generateBlueprintWithRetry(
     "json_response_format",
     "plain_text_json",
   ];
-  const historyLimits = [12, 4];
+  const historyLimits = [4];
 
   for (const model of modelCandidates) {
     for (const historyLimit of historyLimits) {
       for (const mode of modes) {
+        if (Date.now() - startedAt > maxTotalDurationMs) {
+          lastErrorMessage = "Request timed out.";
+          break;
+        }
+
         try {
           const completionArgs: {
             model: string;

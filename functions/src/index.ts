@@ -48,7 +48,7 @@ export const generateBlueprint = onCall(
   {
     cors: true,
     region: "us-central1",
-    timeoutSeconds: 180,
+    timeoutSeconds: 300,
     memory: "512MiB",
     secrets: [openAIApiKey],
   },
