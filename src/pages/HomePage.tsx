@@ -13,12 +13,17 @@ export const HomePage = () => {
     <div className="app-shell">
       {errorMessage ? <ErrorBanner message={errorMessage} onDismiss={clearError} /> : null}
 
-      <aside className="left-column">
-        <header className="app-header card">
+      <header className="top-navbar card" role="banner">
+        <div className="top-navbar-brand">
           <h1>ArchitectAI</h1>
           <p className="muted">AI-powered house blueprint generation</p>
-        </header>
-        <AuthControls />
+        </div>
+        <div className="top-navbar-auth">
+          <AuthControls variant="navbar" />
+        </div>
+      </header>
+
+      <aside className="left-column">
         <ProjectControls />
         <ChatPanel />
       </aside>

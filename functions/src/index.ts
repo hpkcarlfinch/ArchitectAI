@@ -2,7 +2,7 @@ import { initializeApp } from "firebase-admin/app";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { logger } from "firebase-functions";
 import { z } from "zod";
-import { aiEnvelopeSchema } from "./blueprintSchema.js";
+import { parseAndNormalizeAIEnvelope } from "./blueprintSchema.js";
 import { openAIApiKey, openAIModel } from "./config.js";
 import { generateBlueprintWithRetry } from "./openaiService.js";
 
@@ -30,7 +30,7 @@ const resolveApiKey = (): string => {
 };
 
 const requestSchema = z.object({
-  message: z.string().min(5),
+  message: z.string().trim().min(1),
   chatHistory: z
     .array(
       z.object({
@@ -65,7 +65,7 @@ export const generateBlueprint = onCall(
         apiKey: resolveApiKey(),
         model: openAIModel.value(),
       });
-      const valid = aiEnvelopeSchema.parse(aiResponse);
+      const valid = parseAndNormalizeAIEnvelope(aiResponse);
 
       if (valid.status === "blueprint_ready" && !valid.blueprint) {
         throw new HttpsError("failed-precondition", "AI response marked blueprint_ready but no blueprint payload exists.");

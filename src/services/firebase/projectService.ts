@@ -12,12 +12,82 @@ import {
 } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import type { BlueprintProject } from "../../types/project";
+import type { ChatMessage } from "../../types/chat";
+import type { RenderMode } from "../../types/blueprint";
+import { normalizeProjectBlueprintValue, PROJECT_RENDER_MODE_DEFAULT } from "../blueprint/normalize";
 import { db } from "./firebaseClient";
 
 const userProjectsRef = (userId: string) => collection(db, "users", userId, "projects");
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
   return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined)) as Partial<T>;
+};
+
+const asRecord = (value: unknown): Record<string, unknown> => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+  return value as Record<string, unknown>;
+};
+
+const asString = (value: unknown, fallback = ""): string => {
+  return typeof value === "string" ? value : fallback;
+};
+
+const normalizeRenderMode = (value: unknown): RenderMode => {
+  return value === "3d" ? "3d" : PROJECT_RENDER_MODE_DEFAULT;
+};
+
+const normalizeChatHistory = (value: unknown): ChatMessage[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => {
+      const source = asRecord(item);
+      const role = source.role === "assistant" ? "assistant" : source.role === "user" ? "user" : null;
+      const content = asString(source.content);
+      if (!role || !content.trim()) {
+        return null;
+      }
+
+      return {
+        id: asString(source.id, crypto.randomUUID()),
+        role,
+        content,
+        createdAt: asString(source.createdAt, new Date().toISOString()),
+      };
+    })
+    .filter((item): item is ChatMessage => item !== null);
+};
+
+const normalizeProject = (userId: string, projectId: string, rawData: unknown): BlueprintProject => {
+  const source = asRecord(rawData);
+  const nowIso = new Date().toISOString();
+
+  return {
+    id: projectId,
+    userId: asString(source.userId, userId),
+    title: asString(source.title, "Untitled Project"),
+    description: asString(source.description, "Describe your dream house in chat to generate a blueprint."),
+    createdAt: asString(source.createdAt, nowIso),
+    updatedAt: asString(source.updatedAt, nowIso),
+    chatHistory: normalizeChatHistory(source.chatHistory),
+    blueprintJson: normalizeProjectBlueprintValue(source.blueprintJson),
+    renderMode: normalizeRenderMode(source.renderMode),
+  };
+};
+
+const normalizeProjectForSave = (
+  payload: Omit<BlueprintProject, "id" | "createdAt" | "updatedAt" | "userId">,
+): Omit<BlueprintProject, "id" | "createdAt" | "updatedAt" | "userId"> => {
+  return {
+    ...payload,
+    chatHistory: normalizeChatHistory(payload.chatHistory),
+    blueprintJson: normalizeProjectBlueprintValue(payload.blueprintJson),
+    renderMode: normalizeRenderMode(payload.renderMode),
+  };
 };
 
 const toFirestoreErrorMessage = (error: unknown): string => {
@@ -46,7 +116,7 @@ export const listProjects = async (userId: string): Promise<BlueprintProject[]> 
     const q = query(userProjectsRef(userId), orderBy("updatedAt", "desc"));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<BlueprintProject, "id">) }));
+    return snapshot.docs.map((d) => normalizeProject(userId, d.id, d.data()));
   } catch (error) {
     throw new Error(toFirestoreErrorMessage(error));
   }
@@ -58,7 +128,8 @@ export const saveProject = async (
 ): Promise<string> => {
   try {
     const { id, ...projectData } = project;
-    const sanitizedProjectData = removeUndefinedFields(projectData);
+    const normalizedProjectData = normalizeProjectForSave(projectData);
+    const sanitizedProjectData = removeUndefinedFields(normalizedProjectData);
 
     if (id) {
       const ref = doc(db, "users", userId, "projects", id);
@@ -97,7 +168,7 @@ export const getProject = async (userId: string, projectId: string): Promise<Blu
       return null;
     }
 
-    return { id: snapshot.id, ...(snapshot.data() as Omit<BlueprintProject, "id">) };
+    return normalizeProject(userId, snapshot.id, snapshot.data());
   } catch (error) {
     throw new Error(toFirestoreErrorMessage(error));
   }

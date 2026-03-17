@@ -18,6 +18,17 @@ export const getFloorBounds = (floor: FloorPlan): Bounds => {
     points.push(wall.end);
   });
 
+  if (points.length === 0) {
+    return {
+      minX: 0,
+      minY: 0,
+      maxX: 10,
+      maxY: 10,
+      width: 10,
+      height: 10,
+    };
+  }
+
   const minX = Math.min(...points.map((p) => p.x));
   const minY = Math.min(...points.map((p) => p.y));
   const maxX = Math.max(...points.map((p) => p.x));
